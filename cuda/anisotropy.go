@@ -49,3 +49,24 @@ func AddUniaxialAnisotropy2(Beff, m *data.Slice, Msat, k1, k2, u MSlice) {
 		u.DevPtr(Z), u.Mul(Z),
 		N, cfg)
 }
+
+// Add uniaxial magnetocrystalline anisotropy field to Beff.
+// see uniaxialanisotropy.cu
+func AddUniaxialAnisotropy(Beff, m *data.Slice, Msat, k1, u MSlice) {
+	util.Argument(Beff.Size() == m.Size())
+
+	checkSize(Beff, m, k1, u, Msat)
+
+	N := Beff.Len()
+	cfg := make1DConf(N)
+
+	k_adduniaxialanisotropy_async(
+		Beff.DevPtr(X), Beff.DevPtr(Y), Beff.DevPtr(Z),
+		m.DevPtr(X), m.DevPtr(Y), m.DevPtr(Z),
+		Msat.DevPtr(0), Msat.Mul(0),
+		k1.DevPtr(0), k1.Mul(0),
+		u.DevPtr(X), u.Mul(X),
+		u.DevPtr(Y), u.Mul(Y),
+		u.DevPtr(Z), u.Mul(Z),
+		N, cfg)
+}
